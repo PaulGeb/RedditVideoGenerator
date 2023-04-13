@@ -1,3 +1,4 @@
+import configparser
 import os
 import re
 import praw
@@ -5,16 +6,19 @@ import markdown_to_text
 import time
 from videoscript import VideoScript
 
+
+config = configparser.ConfigParser()
+config.read('reddit.ini')
+
 # Configuration variables
-CLIENT_ID = "YOUR_CLIENT_ID_HERE"
-CLIENT_SECRET = "YOUR_CLIENT_SECRET_HERE"
-USER_AGENT = "YOUR_USER_AGENT_HERE" 
-# user_agent sounds scary, but it's just a string to identify what your using it for
-# It's common courtesy to use something like <platform>:<name>:<version> by <your name>
-# ex. "Window11:TestApp:v0.1 by u/Shifty-The-Dev"
+CLIENT_ID = config["CLIENT_ID"]
+CLIENT_SECRET = config["CLIENT_SECRET"]
+USER_AGENT = config["USER_AGENT"]
+
 SUBREDDIT = "askreddit"
 
 REDDIT_URL = "https://www.reddit.com/"
+
 
 def getContent(outputDir, postOptionCount) -> VideoScript:
     reddit = __getReddit()
@@ -40,10 +44,11 @@ def getContent(outputDir, postOptionCount) -> VideoScript:
         selectedPost = posts[postSelection]
         return __getContentFromPost(selectedPost)
 
+
 def getContentFromId(outputDir, submissionId) -> VideoScript:
     reddit = __getReddit()
     existingPostIds = __getExistingPostIds(outputDir)
-    
+
     if (submissionId in existingPostIds):
         print("Video already exists!")
         exit()
@@ -53,6 +58,7 @@ def getContentFromId(outputDir, submissionId) -> VideoScript:
         print(f"Submission with id '{submissionId}' not found!")
         exit()
     return __getContentFromPost(submission)
+
 
 def __getReddit():
     return praw.Reddit(
@@ -69,15 +75,16 @@ def __getContentFromPost(submission) -> VideoScript:
 
     failedAttempts = 0
     for comment in submission.comments:
-        if(content.addCommentScene(markdown_to_text.markdown_to_text(comment.body), comment.id)):
+        if (content.addCommentScene(markdown_to_text.markdown_to_text(comment.body), comment.id)):
             failedAttempts += 1
         if (content.canQuickFinish() or (failedAttempts > 2 and content.canBeFinished())):
             break
     return content
 
+
 def __getExistingPostIds(outputDir):
     files = os.listdir(outputDir)
-    # I'm sure anyone knowledgeable on python hates this. I had some weird 
+    # I'm sure anyone knowledgeable on python hates this. I had some weird
     # issues and frankly didn't care to troubleshoot. It works though...
     files = [f for f in files if os.path.isfile(outputDir+'/'+f)]
     return [re.sub(r'.*?-', '', file) for file in files]

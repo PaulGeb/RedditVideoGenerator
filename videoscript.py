@@ -3,9 +3,10 @@ from moviepy.editor import AudioFileClip
 import voiceover
 
 MAX_WORDS_PER_COMMENT = 100
-MIN_COMMENTS_FOR_FINISH = 4
-MIN_DURATION = 20
-MAX_DURATION = 58
+MIN_COMMENTS_FOR_FINISH = 2
+MIN_DURATION = 15
+MAX_DURATION = 48
+
 
 class VideoScript:
     title = ""
@@ -44,9 +45,12 @@ class VideoScript:
         return self.fileName
 
     def __createVoiceOver(self, name, text):
-        file_path = voiceover.create_voice_over(f"{self.fileName}-{name}", text)
+        file_path = voiceover.create_voice_over(
+            f"{self.fileName}-{name}", text)
         audioClip = AudioFileClip(file_path)
         if (self.totalDuration + audioClip.duration > MAX_DURATION):
+            return None
+        if (self.totalDuration <= 0 and audioClip.duration < 2):
             return None
         self.totalDuration += audioClip.duration
         return audioClip
