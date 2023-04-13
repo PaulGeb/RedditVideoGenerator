@@ -11,9 +11,9 @@ config = configparser.ConfigParser()
 config.read('reddit.ini')
 
 # Configuration variables
-CLIENT_ID = config["CLIENT_ID"]
-CLIENT_SECRET = config["CLIENT_SECRET"]
-USER_AGENT = config["USER_AGENT"]
+CLIENT_ID = config["General"]["CLIENT_ID"]
+CLIENT_SECRET = config["General"]["CLIENT_SECRET"]
+USER_AGENT = config["General"]["USER_AGENT"]
 
 SUBREDDIT = "askreddit"
 
