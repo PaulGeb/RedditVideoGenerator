@@ -33,9 +33,9 @@ class VideoScript:
         wordCount = len(text.split())
         if (wordCount > MAX_WORDS_PER_COMMENT):
             return True
-        for word in BANNED_WORDS:
-            if (word.casefold() in text.casefold()):
-                return True
+        # for word in BANNED_WORDS:
+        #     if (word.casefold() in text.casefold()):
+        #         return True
         frame = ScreenshotScene(text, commentId)
         frame.audioClip = self.__createVoiceOver(commentId, text)
         if (frame.audioClip == None):

@@ -38,13 +38,24 @@ def __setupDriver(url: str):
     options = webdriver.FirefoxOptions()
     options.headless = False
     options.enable_mobile = False
-    driver = webdriver.Firefox(options=options)
+
+    profile = webdriver.FirefoxProfile()
+    profile.set_preference('network.cookie.cookieBehavior', 1)
+
+    driver_path = r'C:\Geckodriver\geckodriver.exe'
+    driver = webdriver.Firefox(
+        executable_path=driver_path,
+        options=options,
+        firefox_profile=profile
+    )
+
     wait = WebDriverWait(driver, 10)
     driver.get(url)
     driver.implicitly_wait(10)
     print("Trying to click Cookies...")
     wait.until(EC.element_to_be_clickable(
-        (By.CSS_SELECTOR, "button[class='_1tI68pPnLBjR1iHcL7vsee _2iuoyPiKHN3kfOoeIQalDT _10BQ7pjWbeYP63SAPNS8Ts HNozj_dKjQZ59ZsfEegz8 ']"))).click()
+        (By.CSS_SELECTOR, "button[class='_1tI68pPnLBjR1iHcL7vsee _2iuoyPiKHN3kfOoeIQalDT _10BQ7pjWbeYP63SAPNS8Ts HNozj_dKjQZ59ZsfEegz8 ']")
+    )).click()
     print("Clicked Cookies")
 
     driver.set_window_size(width=screenWidth, height=screenHeight)
